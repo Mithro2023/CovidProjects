@@ -55,20 +55,20 @@ where continent is not null;
 
 -- -- looking at total population vs vaccination
 select 
-	de.continent,
+    de.continent,
     de.location,
     de.date,
     de.population,
     va.total_vaccinations
 from coviddeaths de
 join covidvaccinations va
-	on de.location = va.location
+    on de.location = va.location
     and de.date = va.date
 where de.continent is not null;
 
 -- --Find RollingPeopleVa
 select 
-	de.continent,
+    de.continent,
     de.location,
     de.date,
     de.population,
@@ -76,7 +76,7 @@ select
     sum(va.new_vaccinations) over (partition by de.location order by de.location, de.date) as RollingPeopleVa
 from coviddeaths de
 join covidvaccinations va
-	on de.location = va.location
+    on de.location = va.location
     and de.date = va.date
 where de.continent is not null;
 
@@ -84,8 +84,8 @@ where de.continent is not null;
 with PopvsVa (continent, location, date, population, total_vaccinations, RollingPeopleVa)
 as
 (
-	select 
-	de.continent,
+    select 
+    de.continent,
     de.location,
     de.date,
     de.population,
@@ -93,7 +93,7 @@ as
     sum(va.new_vaccinations) over (partition by de.location order by de.location, de.date) as RollingPeopleVa
 from coviddeaths de
 join covidvaccinations va
-	on de.location = va.location
+    on de.location = va.location
     and de.date = va.date
 where de.continent is not null
 )
@@ -103,10 +103,10 @@ from PopvsVa;
 -- -- Creating view to store data
 Create View percentages as
 Select de.continent, de.location, de.date, de.population, va.new_vaccinations,
-	SUM(va.new_vaccinations) OVER (Partition by de.Location Order by de.location, de.Date) as RollingPeopleVaccinated
+    SUM(va.new_vaccinations) OVER (Partition by de.Location Order by de.location, de.Date) as RollingPeopleVaccinated
 -- (RollingPeopleVaccinated/population)*100
 From CovidDeaths de
 Join CovidVaccinations va
-	On de.location = va.location
+    On de.location = va.location
     and de.date = va.date
 where de.continent is not null
